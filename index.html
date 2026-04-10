@@ -1,438 +1,709 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=5.0"/>
-    <title>AI Video Studio — Free 4K Access</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com"/>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FrameForge AI — Free AI Video, Music & Voice Tools</title>
+<meta name="description" content="Generate stunning AI videos, royalty-free music, and clone any voice for free. No sign-up required." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #070a0f;
+    --surface: #0d1117;
+    --card: #111820;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --text: #e8edf2;
+    --muted: #6b7585;
+    --danger: #ff4560;
+  }
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { 
-                        syne: ['Syne', 'sans-serif'], 
-                        dm: ['DM Sans', 'sans-serif'] 
-                    },
-                    colors: {
-                        brand: {
-                            light: '#A78BFA',
-                            DEFAULT: '#7C3AED',
-                            dark: '#5B21B6',
-                            deep: '#080514'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    <style>
-        html { scroll-behavior: smooth; }
-        body {
-            background: #080514;
-            font-family: 'DM Sans', sans-serif;
-            color: #DDD6FE;
-            overflow-x: hidden;
-        }
-        
-        /* Background Glows */
-        .bg-glow::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            pointer-events: none;
-            z-index: -1;
-            background: 
-                radial-gradient(ellipse 70% 50% at 10% 5%, rgba(59, 20, 114, 0.4), transparent 55%),
-                radial-gradient(ellipse 50% 40% at 90% 85%, rgba(30, 10, 74, 0.35), transparent 50%);
-        }
+  html { scroll-behavior: smooth; }
 
-        /* Glassmorphism */
-        .glass {
-            background: rgba(124, 58, 237, 0.07);
-            border: 1px solid rgba(167, 139, 250, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
 
-        /* Shimmer Effect */
-        .shimmer-text {
-            background: linear-gradient(90deg, #A78BFA, #fff 45%, #C4B5FD 60%, #A78BFA);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s linear infinite;
-        }
-        @keyframes shimmer {
-            0% { background-position: -200% center; }
-            100% { background-position: 200% center; }
-        }
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 20px 2px rgba(124, 58, 237, 0.3); }
-            50% { box-shadow: 0 0 40px 8px rgba(124, 58, 237, 0.5); }
-        }
+  /* ── GLOW BLOBS ── */
+  .glow-1, .glow-2 {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .glow-1 { width: 600px; height: 600px; background: rgba(0,212,255,0.06); top: -200px; right: -150px; }
+  .glow-2 { width: 500px; height: 500px; background: rgba(124,58,237,0.07); bottom: 10%; left: -150px; }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #7C3AED, #5B21B6);
-            border: 1px solid rgba(167, 139, 250, 0.3);
-            transition: all 0.2s ease;
-            animation: pulse-glow 2.5s infinite;
-        }
-        .btn-primary:hover { transform: scale(1.03); }
-        .btn-primary:active { transform: scale(0.97); }
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 16px 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(7,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
 
-        /* Ticker Animation */
-        .ticker-wrap { overflow: hidden; white-space: nowrap; }
-        .ticker-content { display: inline-block; animation: tick 30s linear infinite; }
-        @keyframes tick {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    letter-spacing: -0.5px;
+    color: #fff;
+    text-decoration: none;
+  }
+  .logo span { color: var(--accent); }
 
-        /* Before/After Slider */
-        .ba-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 1.5rem;
-            aspect-ratio: 16/9;
-            cursor: col-resize;
-            touch-action: none;
-        }
-        .ba-after {
-            position: absolute;
-            inset: 0;
-            clip-path: inset(0 50% 0 0);
-        }
-        .ba-handle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 50%;
-            width: 2px;
-            background: #A78BFA;
-            transform: translateX(-50%);
-            pointer-events: none;
-        }
+  .nav-cta {
+    background: var(--accent);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 9px 22px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+  .nav-cta:hover { opacity: 0.85; }
 
-        /* Progress Bar */
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #5B21B6, #8B5CF6, #C4B5FD);
-            box-shadow: 0 0 15px #7C3AED;
-            transition: width 0.4s ease;
-        }
+  /* ── TICKER ── */
+  .ticker-wrap {
+    margin-top: 65px;
+    background: rgba(0,212,255,0.06);
+    border-bottom: 1px solid rgba(0,212,255,0.15);
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 10px 0;
+  }
+  .ticker {
+    display: inline-block;
+    animation: ticker 35s linear infinite;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: 0.3px;
+  }
+  @keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
 
-        /* Reveal on Scroll */
-        .reveal {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.6s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    </style>
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 80px 5vw 60px;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,212,255,0.1);
+    border: 1px solid rgba(0,212,255,0.25);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 6px 16px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    letter-spacing: 0.4px;
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    line-height: 1.08;
+    letter-spacing: -1.5px;
+    color: #fff;
+    margin-bottom: 22px;
+  }
+  h1 em {
+    font-style: normal;
+    background: linear-gradient(90deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    color: var(--muted);
+    font-size: 1.1rem;
+    max-width: 540px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    flex-wrap: wrap;
+    margin-top: 48px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+  }
+  .stat-label { font-size: 0.78rem; color: var(--muted); }
+
+  /* ── TOOL SECTION ── */
+  .section {
+    position: relative;
+    z-index: 1;
+    padding: 80px 5vw;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    letter-spacing: -0.8px;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 1rem;
+    margin-bottom: 48px;
+    max-width: 520px;
+  }
+
+  /* ── TOOL CARDS ── */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+  }
+
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    transition: border-color 0.25s, transform 0.25s;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+  .tool-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.04), transparent 70%);
+    pointer-events: none;
+  }
+  .tool-card:hover {
+    border-color: rgba(0,212,255,0.3);
+    transform: translateY(-3px);
+  }
+
+  .tool-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+  .tool-icon.blue { background: rgba(0,212,255,0.12); }
+  .tool-icon.purple { background: rgba(124,58,237,0.15); }
+  .tool-icon.pink { background: rgba(236,72,153,0.12); }
+
+  .tool-card h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 10px;
+  }
+
+  .tool-card p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+
+  .tool-input-area {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+  }
+
+  .tool-input-area textarea,
+  .tool-input-area input[type="text"] {
+    width: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    resize: none;
+    line-height: 1.5;
+  }
+  .tool-input-area textarea::placeholder,
+  .tool-input-area input::placeholder { color: var(--muted); }
+
+  .tool-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+  }
+  .tool-opt {
+    font-size: 0.75rem;
+    padding: 5px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: transparent;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .tool-opt:hover, .tool-opt.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,212,255,0.08);
+  }
+
+  .btn-generate {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s;
+    letter-spacing: 0.3px;
+  }
+  .btn-generate:hover { opacity: 0.88; transform: scale(0.99); }
+
+  .btn-generate.purple-btn {
+    background: linear-gradient(135deg, #7c3aed, #a855f7);
+    color: #fff;
+  }
+  .btn-generate.pink-btn {
+    background: linear-gradient(135deg, #ec4899, #f43f5e);
+    color: #fff;
+  }
+
+  .tool-tag {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* ── BEFORE/AFTER SLIDER ── */
+  .compare-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 780px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    aspect-ratio: 16/9;
+    cursor: col-resize;
+    user-select: none;
+  }
+
+  .compare-after, .compare-before {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .compare-after {
+    background: linear-gradient(135deg, #0d1f2d, #0a1628);
+    z-index: 1;
+    clip-path: inset(0 50% 0 0);
+  }
+  .compare-before {
+    background: linear-gradient(135deg, #1a1a1a, #111);
+    z-index: 0;
+  }
+
+  .compare-label {
+    position: absolute;
+    bottom: 16px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 100px;
+  }
+  .compare-after .compare-label { left: 16px; background: var(--accent); color: #000; }
+  .compare-before .compare-label { right: 16px; background: rgba(255,255,255,0.1); color: #fff; }
+
+  .compare-icon { font-size: 3rem; opacity: 0.25; }
+  .compare-text { font-size: 0.8rem; color: var(--muted); }
+  .compare-text-after { font-size: 0.8rem; color: var(--accent); opacity: 0.7; }
+
+  .compare-divider {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 3px;
+    background: var(--accent);
+    z-index: 10;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+  .compare-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40px; height: 40px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+    font-size: 1rem;
+    z-index: 11;
+    box-shadow: 0 0 20px rgba(0,212,255,0.5);
+    cursor: col-resize;
+  }
+
+  /* ── URGENCY BAR ── */
+  .urgency-bar {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(90deg, rgba(0,212,255,0.08), rgba(124,58,237,0.08));
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 20px 5vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+  .urgency-item { display: flex; align-items: center; gap: 10px; }
+  .urgency-label { font-size: 0.85rem; color: var(--muted); }
+  .urgency-val { font-family: 'Syne', sans-serif; font-weight: 700; color: #fff; font-size: 0.95rem; }
+  #countdown-display {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    counter-reset: step;
+  }
+  .step {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    position: relative;
+    counter-increment: step;
+  }
+  .step::before {
+    content: counter(step);
+    font-family: 'Syne', sans-serif;
+    font-size: 3rem;
+    font-weight: 800;
+    color: rgba(0,212,255,0.08);
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    line-height: 1;
+  }
+  .step h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── FOOTER ── */
+  footer {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: 48px 5vw 32px;
+    border-top: 1px solid var(--border);
+  }
+  .footer-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.3rem;
+    color: #fff;
+    margin-bottom: 12px;
+  }
+  .footer-logo span { color: var(--accent); }
+  footer p { font-size: 0.82rem; color: var(--muted); }
+
+  /* ── MODAL (locker) ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card);
+    border: 1px solid rgba(0,212,255,0.2);
+    border-radius: 24px;
+    padding: 40px 36px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+  .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+  .modal h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 10px;
+    letter-spacing: -0.5px;
+  }
+  .modal p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; margin-bottom: 24px; }
+  .modal-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, var(--accent), #0099cc);
+    color: #000;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: opacity 0.2s;
+    margin-bottom: 12px;
+  }
+  .modal-btn:hover { opacity: 0.85; }
+  .modal-close {
+    font-size: 0.8rem;
+    color: var(--muted);
+    cursor: pointer;
+    text-decoration: underline;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  /* ── UTIL ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 60px 5vw 40px; }
+    .hero-stats { gap: 24px; }
+    nav { padding: 14px 4vw; }
+  }
+</style>
 </head>
-<body class="bg-glow">
+<body>
 
-    <!-- ══ SOCIAL PROOF TICKER ══ -->
-    <div class="relative z-50 border-b border-purple-900/30 py-2.5 bg-brand-deep/80 backdrop-blur-md">
-        <div class="ticker-wrap text-[10px] md:text-xs text-purple-400 font-medium">
-            <div class="ticker-content">
-                <span>&nbsp;🟢 Ahmed from US just generated &nbsp;·&nbsp; 🟢 Layla from CA unlocked access 2 min ago &nbsp;·&nbsp; 🟢 James from UK just verified &nbsp;·&nbsp; 🟢 Sofia from AU generated 4K video &nbsp;·&nbsp; 🟢 Noah from US generating now &nbsp;·&nbsp; 🟢 Emma from CA unlocked access &nbsp;·&nbsp;</span>
-                <span>&nbsp;🟢 Ahmed from US just generated &nbsp;·&nbsp; 🟢 Layla from CA unlocked access 2 min ago &nbsp;·&nbsp; 🟢 James from UK just verified &nbsp;·&nbsp; 🟢 Sofia from AU generated 4K video &nbsp;·&nbsp; 🟢 Noah from US generating now &nbsp;·&nbsp; 🟢 Emma from CA unlocked access &nbsp;·&nbsp;</span>
-            </div>
-        </div>
+<div class="glow-1"></div>
+<div class="glow-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">Frame<span>Forge</span> AI</a>
+  <a class="nav-cta" href="#tools">Try Free →</a>
+</nav>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    &nbsp;&nbsp;⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;·&nbsp; 🎵 500K+ royalty-free tracks &nbsp;·&nbsp; 🎙️ 120+ AI voices &nbsp;·&nbsp; 🌍 Works in 40 languages &nbsp;·&nbsp; ✅ No watermark on export &nbsp;·&nbsp; 📱 All formats: 16:9 · 9:16 · 1:1 &nbsp;·&nbsp; ⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;·&nbsp; 🎵 500K+ royalty-free tracks &nbsp;·&nbsp; 🎙️ 120+ AI voices &nbsp;·&nbsp; 🌍 Works in 40 languages &nbsp;·&nbsp; ✅ No watermark on export &nbsp;·&nbsp; 📱 All formats: 16:9 · 9:16 · 1:1 &nbsp;&nbsp;
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">✦ Free to use — No credit card required</div>
+  <h1>Turn Any Idea Into<br>a <em>Stunning AI Video</em></h1>
+  <p class="hero-sub">Write a prompt. FrameForge AI scripts, animates, voices, and exports your video in under 60 seconds. No editing skills needed.</p>
+
+  <div class="hero-stats">
+    <div class="stat"><span class="stat-num">4K</span><span class="stat-label">Max Output</span></div>
+    <div class="stat"><span class="stat-num">&lt;60s</span><span class="stat-label">Generation Time</span></div>
+    <div class="stat"><span class="stat-num">120+</span><span class="stat-label">AI Voices</span></div>
+    <div class="stat"><span class="stat-num">Free</span><span class="stat-label">No Card Needed</span></div>
+  </div>
+</section>
+
+<hr class="divider" />
+
+<!-- URGENCY BAR -->
+<div class="urgency-bar">
+  <div class="urgency-item">
+    <span class="urgency-label">🔥 Free access resets in</span>
+    <span id="countdown-display">--:--:--</span>
+  </div>
+  <div class="urgency-item">
+    <span class="urgency-label">Daily free generations left:</span>
+    <span class="urgency-val" id="spots-left">24</span>
+  </div>
+</div>
+
+<hr class="divider" />
+
+<!-- TOOLS SECTION -->
+<section class="section" id="tools">
+  <div class="section-label">⚡ Free AI Tools</div>
+  <h2 class="section-title">Pick Your Tool. Generate Instantly.</h2>
+  <p class="section-sub">Three free AI tools — video, music, voice. All generated in under a minute. Just describe what you want.</p>
+
+  <div class="tools-grid">
+
+    <!-- VIDEO CARD -->
+    <div class="tool-card" id="card-video">
+      <div class="tool-icon blue">🎬</div>
+      <h3>AI Video Generator</h3>
+      <p>Describe your scene and get a full cinematic video with auto-scripting, color grading, and 4K export.</p>
+      <div class="tool-input-area">
+        <textarea rows="3" placeholder="e.g. A neon-lit city at night, drone shot, cinematic mood…" id="video-prompt"></textarea>
+      </div>
+      <div class="tool-options">
+        <button class="tool-opt active" onclick="selectOpt(this)">Cinematic</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Vlog</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Product</button>
+        <button class="tool-opt" onclick="selectOpt(this)">4K · 16:9</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Shorts · 9:16</button>
+      </div>
+      <button class="btn-generate" onclick="triggerLocker('video')">⚡ Generate Video Free</button>
+      <p class="tool-tag">No sign-up · 1080p watermarked on free tier</p>
     </div>
 
-    <!-- ══ NAVBAR ══ -->
-    <nav class="relative z-40 flex items-center justify-between px-6 py-5 max-w-4xl mx-auto">
-        <div class="flex items-center gap-2.5">
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-brand-light to-brand-dark shadow-lg shadow-brand/40">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-                </svg>
-            </div>
-            <span class="font-syne font-extrabold text-lg tracking-tight text-white uppercase">AI<span class="text-brand-light">Studio</span></span>
-        </div>
-        <div class="flex items-center gap-2 text-[10px] md:text-xs font-bold text-red-300 glass rounded-full px-4 py-2 border-red-500/20">
-            <span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            <span id="spots-left">47</span> SPOTS LEFT
-        </div>
-    </nav>
+    <!-- MUSIC CARD -->
+    <div class="tool-card" id="card-music">
+      <div class="tool-icon purple">🎵</div>
+      <h3>AI Music Generator</h3>
+      <p>Describe the mood and get a royalty-free original track in seconds. Perfect for Reels, YouTube, and ads.</p>
+      <div class="tool-input-area">
+        <textarea rows="3" placeholder="e.g. Upbeat lo-fi hip hop, warm and cozy, 90 BPM…" id="music-prompt"></textarea>
+      </div>
+      <div class="tool-options">
+        <button class="tool-opt active" onclick="selectOpt(this)">Lo-fi</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Epic</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Chill</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Hip-hop</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Ambient</button>
+      </div>
+      <button class="btn-generate purple-btn" onclick="triggerLocker('music')">🎵 Generate Music Free</button>
+      <p class="tool-tag">Royalty-free · 60s preview on free tier</p>
+    </div>
 
-    <!-- ══ HERO ══ -->
-    <section class="relative z-30 px-6 pt-8 pb-12 text-center max-w-2xl mx-auto">
-        <div class="inline-flex items-center gap-2 glass rounded-full px-4 py-1.5 mb-6 text-[10px] font-bold text-brand-light uppercase tracking-[0.2em]">
-            <span class="text-yellow-400">★</span> 2026 NEXT-GEN AI
-        </div>
+    <!-- VOICE CARD -->
+    <div class="tool-card" id="card-voice">
+      <div class="tool-icon pink">🎙️</div>
+      <h3>AI Voice Changer</h3>
+      <p>Clone any voice or transform your recording into 120+ natural AI voices across 40 languages instantly.</p>
+      <div class="tool-input-area">
+        <input type="text" placeholder="e.g. Deep male narrator, British accent, calm tone…" id="voice-prompt" />
+      </div>
+      <div class="tool-options">
+        <button class="tool-opt active" onclick="selectOpt(this)">Male Deep</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Female Soft</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Narrator</button>
+        <button class="tool-opt" onclick="selectOpt(this)">Clone Voice</button>
+      </div>
+      <button class="btn-generate pink-btn" onclick="triggerLocker('voice')">🎙️ Change Voice Free</button>
+      <p class="tool-tag">30s sample on free tier · No account needed</p>
+    </div>
 
-        <h1 class="font-syne font-extrabold text-4xl md:text-6xl leading-[1.1] text-white mb-6">
-            Turn Any Photo Into<br/><span class="shimmer-text">4K Cinematic Video</span><br/>In Seconds.
-        </h1>
+  </div>
+</section>
 
-        <p class="text-sm md:text-base mb-10 text-purple-200/60 max-w-md mx-auto leading-relaxed">
-            Powered by Generative AI. No technical skills needed.<br/>
-            <span class="text-brand-light font-bold">100% Free — Limited Time Access.</span>
-        </p>
+<hr class="divider" />
 
-        <a href="#generator" class="btn-primary inline-block w-full max-w-sm py-5 rounded-2xl font-syne font-extrabold text-lg text-white shadow-xl">
-            ⚡ GET FREE ACCESS NOW
-        </a>
-        <p class="text-[10px] mt-4 text-purple-400/40 font-medium tracking-wide">NO SIGNUP · NO CREDIT CARD · INSTANT RENDER</p>
-
-        <!-- Trust Badges -->
-        <div class="flex justify-center items-center gap-8 mt-12 opacity-80">
-            <div class="text-center">
-                <div class="font-syne font-extrabold text-xl text-white">2.4M+</div>
-                <div class="text-[10px] text-purple-400/60 uppercase font-bold tracking-tighter">Videos Made</div>
-            </div>
-            <div class="h-8 w-px bg-purple-900/50"></div>
-            <div class="text-center">
-                <div class="font-syne font-extrabold text-xl text-white">4.9 ★</div>
-                <div class="text-[10px] text-purple-400/60 uppercase font-bold tracking-tighter">User Rating</div>
-            </div>
-            <div class="h-8 w-px bg-purple-900/50"></div>
-            <div class="text-center">
-                <div class="font-syne font-extrabold text-xl text-white">4K/60</div>
-                <div class="text-[10px] text-purple-400/60 uppercase font-bold tracking-tighter">FPS Output</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══ SHOWCASE (BEFORE/AFTER) ══ -->
-    <section class="reveal px-6 mb-16 max-w-2xl mx-auto">
-        <p class="text-center text-[10px] mb-4 uppercase tracking-[0.2em] font-bold text-purple-400/40">Slide to compare quality</p>
-        
-        <div class="ba-container glass shadow-2xl shadow-brand/20 border-brand/20" id="ba-slider">
-            <!-- Before Image -->
-            <div class="absolute inset-0">
-                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1000&q=80" class="w-full h-full object-cover grayscale brightness-50" alt="Before AI">
-                <div class="absolute top-4 left-4 glass px-3 py-1 rounded-full text-[10px] font-bold text-white/60">ORIGINAL PHOTO</div>
-            </div>
-            
-            <!-- After Image -->
-            <div class="ba-after" id="ba-after">
-                <img src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=1000&q=80" class="w-full h-full object-cover brightness-110 saturate-125" style="animation: float 6s ease-in-out infinite" alt="After AI">
-                <div class="absolute inset-0 bg-brand/10 mix-blend-overlay"></div>
-                <div class="absolute top-4 right-4 glass px-3 py-1 rounded-full text-[10px] font-bold text-brand-light border-brand-light/30">● 4K AI RENDER</div>
-            </div>
-            
-            <!-- Slider Handle -->
-            <div class="ba-handle" id="ba-handle">
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-brand-light/40 backdrop-blur-md border-2 border-brand-light flex items-center justify-center shadow-lg">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3">
-                        <path d="M18 8L22 12L18 16M6 8L2 12L6 16"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══ FEATURES ══ -->
-    <section class="reveal px-6 mb-16 max-w-3xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div class="glass rounded-2xl p-6 text-center group hover:border-brand/50 transition-all">
-                <div class="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center bg-brand/20 text-brand-light">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-                </div>
-                <h3 class="font-syne font-bold text-white mb-2">Cinema 4K</h3>
-                <p class="text-xs text-purple-400/70 leading-relaxed">Ultra-high resolution output ready for professional use.</p>
-            </div>
-            <div class="glass rounded-2xl p-6 text-center group hover:border-brand/50 transition-all">
-                <div class="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center bg-brand/20 text-brand-light">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                </div>
-                <h3 class="font-syne font-bold text-white mb-2">AI Neural Engine</h3>
-                <p class="text-xs text-purple-400/70 leading-relaxed">Latest generative models for realistic fluid motion.</p>
-            </div>
-            <div class="glass rounded-2xl p-6 text-center group hover:border-brand/50 transition-all">
-                <div class="w-12 h-12 mx-auto mb-4 rounded-xl flex items-center justify-center bg-brand/20 text-brand-light">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                </div>
-                <h3 class="font-syne font-bold text-white mb-2">Unlimited Use</h3>
-                <p class="text-xs text-purple-400/70 leading-relaxed">No daily limits or restrictions after verification.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- ══ GENERATOR / CONVERSION ══ -->
-    <section id="generator" class="reveal px-6 mb-20 max-w-2xl mx-auto">
-        <div class="glass rounded-[2.5rem] p-8 md:p-12 border-brand/30 relative overflow-hidden shadow-2xl">
-            <!-- Glow background -->
-            <div class="absolute -top-24 -left-24 w-64 h-64 bg-brand/20 rounded-full blur-[80px]"></div>
-            
-            <div id="gen-step-1" class="relative z-10 text-center">
-                <div class="inline-flex items-center gap-2 glass px-4 py-1.5 rounded-full text-[10px] font-bold text-brand-light mb-6">
-                    <span class="w-2 h-2 rounded-full bg-brand-light animate-ping"></span> ENGINE READY
-                </div>
-                <h2 class="font-syne font-extrabold text-2xl md:text-3xl text-white mb-4">Claim Your Unlimited Credits</h2>
-                <p class="text-sm text-purple-300/60 mb-8">Your generation slot is reserved for a limited time.</p>
-                
-                <!-- Countdown -->
-                <div class="flex items-center justify-center gap-2 mb-10">
-                    <div class="bg-brand/20 border border-brand/30 rounded-xl w-12 h-14 flex items-center justify-center font-syne font-bold text-2xl text-white" id="min">29</div>
-                    <div class="text-brand-light font-bold text-2xl">:</div>
-                    <div class="bg-brand/20 border border-brand/30 rounded-xl w-12 h-14 flex items-center justify-center font-syne font-bold text-2xl text-white" id="sec">59</div>
-                </div>
-
-                <button onclick="startProcessing()" class="btn-primary w-full py-5 rounded-2xl font-syne font-extrabold text-lg text-white">
-                    🚀 START 4K GENERATION
-                </button>
-            </div>
-
-            <div id="gen-step-2" class="hidden relative z-10">
-                <div class="text-center mb-8">
-                    <h2 class="font-syne font-extrabold text-2xl text-white mb-2">Processing...</h2>
-                    <p class="text-xs text-purple-400/60" id="status-text">Connecting to AI Neural Clusters...</p>
-                </div>
-
-                <!-- Progress Bar -->
-                <div class="w-full h-3 bg-brand-deep rounded-full overflow-hidden border border-brand/20 mb-6">
-                    <div id="progress-fill" class="progress-bar"></div>
-                </div>
-
-                <!-- Log Terminal -->
-                <div class="bg-black/60 rounded-2xl p-5 font-mono text-[10px] text-brand-light/80 h-32 overflow-hidden border border-brand/10">
-                    <div id="terminal-logs" class="space-y-1"></div>
-                </div>
-            </div>
-
-            <div id="gen-step-3" class="hidden relative z-10 text-center">
-                <div class="w-20 h-20 bg-yellow-500/20 border border-yellow-500/40 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
-                </div>
-                <h2 class="font-syne font-extrabold text-2xl text-white mb-4">Verification Required</h2>
-                <div class="glass rounded-2xl p-6 mb-8 border-yellow-500/20 bg-yellow-500/5">
-                    <p class="text-sm text-yellow-100/80 leading-relaxed">
-                        To prevent bot abuse and maintain 4K server speeds, please complete a quick <span class="text-yellow-400 font-bold">30-second human verification</span>.
-                    </p>
-                </div>
-
-                <!-- CTA -->
-                <a href="YOUR_OGADS_LOCKER_URL_HERE" class="btn-primary block w-full py-5 rounded-2xl font-syne font-extrabold text-lg text-white">
-                    🔓 VERIFY & UNLOCK ACCESS
-                </a>
-                <p class="text-[10px] mt-4 text-purple-400/40 font-medium uppercase tracking-widest">Instant Unlock After Completion</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="px-6 py-12 text-center border-t border-purple-900/20 max-w-4xl mx-auto">
-        <div class="flex items-center justify-center gap-2 mb-6 opacity-40">
-            <div class="w-6 h-6 rounded bg-brand flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
-            <span class="font-syne font-bold text-xs tracking-widest text-white">AI STUDIO PRO</span>
-        </div>
-        <p class="text-[10px] text-purple-400/30 uppercase tracking-[0.3em]">© 2026 GENMOTION TECHNOLOGY · ALL RIGHTS RESERVED</p>
-    </footer>
-
-    <script>
-        // Reveal on Scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('active');
-            });
-        }, { threshold: 0.1 });
-
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-        // Before/After Slider
-        const slider = document.getElementById('ba-slider');
-        const afterImg = document.getElementById('ba-after');
-        const handle = document.getElementById('ba-handle');
-
-        const moveSlider = (e) => {
-            const rect = slider.getBoundingClientRect();
-            const x = (e.pageX || e.touches[0].pageX) - rect.left;
-            const percent = Math.max(0, Math.min(100, (x / rect.width) * 100));
-            afterImg.style.clipPath = `inset(0 0 0 ${percent}%)`;
-            handle.style.left = `${percent}%`;
-        };
-
-        slider.addEventListener('mousemove', moveSlider);
-        slider.addEventListener('touchmove', moveSlider);
-
-        // Countdown Timer
-        let timeLeft = 1799; // 29:59
-        const updateTimer = () => {
-            const m = Math.floor(timeLeft / 60);
-            const s = timeLeft % 60;
-            document.getElementById('min').innerText = m.toString().padStart(2, '0');
-            document.getElementById('sec').innerText = s.toString().padStart(2, '0');
-            if (timeLeft > 0) timeLeft--;
-        };
-        setInterval(updateTimer, 1000);
-
-        // Spot Counter
-        let spots = 47;
-        setInterval(() => {
-            if (spots > 3) {
-                spots -= Math.floor(Math.random() * 2);
-                document.getElementById('spots-left').innerText = spots;
-            }
-        }, 5000);
-
-        // Processing Logic
-        function startProcessing() {
-            document.getElementById('gen-step-1').classList.add('hidden');
-            document.getElementById('gen-step-2').classList.remove('hidden');
-            
-            const logs = [
-                "Initializing Neural Engine...",
-                "Allocating 4K Render Buffers...",
-                "Analyzing Frame Consistency...",
-                "Injecting Motion Vectors...",
-                "Applying Temporal Upscaling...",
-                "Optimizing Light Diffusion...",
-                "Finalizing Cinematic Export..."
-            ];
-            
-            const progressFill = document.getElementById('progress-fill');
-            const terminal = document.getElementById('terminal-logs');
-            const statusText = document.getElementById('status-text');
-            
-            let progress = 0;
-            let logIdx = 0;
-            
-            const interval = setInterval(() => {
-                progress += Math.random() * 15;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        document.getElementById('gen-step-2').classList.add('hidden');
-                        document.getElementById('gen-step-3').classList.remove('hidden');
-                    }, 800);
-                }
-                
-                progressFill.style.width = progress + '%';
-                
-                if (progress > (logIdx + 1) * (100 / logs.length) && logIdx < logs.length) {
-                    const log = document.createElement('div');
-                    log.innerHTML = `<span class="text-purple-600">>></span> ${logs[logIdx]}`;
-                    terminal.appendChild(log);
-                    statusText.innerText = logs[logIdx];
-                    logIdx++;
-                }
-            }, 500);
-        }
-    </script>
-</body>
-</html>
+<!-- BEFORE / AFTER -->
+<section class="section" style="text-align:center;">
+  <div class="section-l
