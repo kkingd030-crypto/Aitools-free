@@ -351,84 +351,6 @@
     margin-top: 10px;
   }
 
-  /* ── BEFORE/AFTER SLIDER ── */
-  .compare-wrap {
-    position: relative;
-    width: 100%;
-    max-width: 780px;
-    margin: 0 auto;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 1px solid var(--border);
-    aspect-ratio: 16/9;
-    cursor: col-resize;
-    user-select: none;
-  }
-
-  .compare-after, .compare-before {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .compare-after {
-    background: linear-gradient(135deg, #0d1f2d, #0a1628);
-    z-index: 1;
-    clip-path: inset(0 50% 0 0);
-  }
-  .compare-before {
-    background: linear-gradient(135deg, #1a1a1a, #111);
-    z-index: 0;
-  }
-
-  .compare-label {
-    position: absolute;
-    bottom: 16px;
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    padding: 4px 12px;
-    border-radius: 100px;
-  }
-  .compare-after .compare-label { left: 16px; background: var(--accent); color: #000; }
-  .compare-before .compare-label { right: 16px; background: rgba(255,255,255,0.1); color: #fff; }
-
-  .compare-icon { font-size: 3rem; opacity: 0.25; }
-  .compare-text { font-size: 0.8rem; color: var(--muted); }
-  .compare-text-after { font-size: 0.8rem; color: var(--accent); opacity: 0.7; }
-
-  .compare-divider {
-    position: absolute;
-    top: 0; bottom: 0;
-    left: 50%;
-    width: 3px;
-    background: var(--accent);
-    z-index: 10;
-    transform: translateX(-50%);
-    pointer-events: none;
-  }
-  .compare-handle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px; height: 40px;
-    background: var(--accent);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #000;
-    font-size: 1rem;
-    z-index: 11;
-    box-shadow: 0 0 20px rgba(0,212,255,0.5);
-    cursor: col-resize;
-  }
-
   /* ── URGENCY BAR ── */
   .urgency-bar {
     position: relative;
@@ -455,40 +377,73 @@
     letter-spacing: 2px;
   }
 
-  /* ── HOW IT WORKS ── */
-  .steps {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    counter-reset: step;
+  /* ── MODAL OVERLAY (Enhanced) ── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px);
   }
-  .step {
+  .modal-overlay.open { display: flex; }
+  
+  .modal {
     background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 28px 24px;
-    position: relative;
-    counter-increment: step;
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 24px;
+    padding: 40px 32px;
+    max-width: 440px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(0,212,255,0.15);
+    animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
   }
-  .step::before {
-    content: counter(step);
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.92) translateY(20px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-icon { font-size: 3rem; margin-bottom: 16px; }
+  .modal h2 {
     font-family: 'Syne', sans-serif;
-    font-size: 3rem;
+    font-size: 1.5rem;
     font-weight: 800;
-    color: rgba(0,212,255,0.08);
-    position: absolute;
-    top: 12px;
-    right: 18px;
-    line-height: 1;
+    color: #fff;
+    margin-bottom: 10px;
   }
-  .step h4 {
+  .modal p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+  
+  .modal-btn-group { display: flex; flex-direction: column; gap: 12px; }
+
+  .modal-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.1);
     font-family: 'Syne', sans-serif;
     font-weight: 700;
-    font-size: 1rem;
-    color: #fff;
-    margin-bottom: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
   }
-  .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+  .modal-btn span { font-size: 0.7rem; font-weight: 300; opacity: 0.8; margin-top: 4px; }
+  
+  .btn-engine { background: linear-gradient(135deg, var(--accent), #0099cc); color: #000; }
+  .btn-prompts { background: linear-gradient(135deg, var(--accent2), #a855f7); color: #fff; }
+  
+  .modal-btn:hover { transform: scale(1.02); filter: brightness(1.1); }
+  
+  .modal-close {
+    background: none; border: none; color: var(--muted);
+    font-size: 0.8rem; text-decoration: underline; margin-top: 20px; cursor: pointer;
+  }
 
   /* ── FOOTER ── */
   footer {
@@ -498,93 +453,11 @@
     padding: 48px 5vw 32px;
     border-top: 1px solid var(--border);
   }
-  .footer-logo {
-    font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 1.3rem;
-    color: #fff;
-    margin-bottom: 12px;
-  }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.3rem; color: #fff; margin-bottom: 12px; }
   .footer-logo span { color: var(--accent); }
   footer p { font-size: 0.82rem; color: var(--muted); }
 
-  /* ── MODAL (locker) ── */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(8px);
-  }
-  .modal-overlay.open { display: flex; }
-  .modal {
-    background: var(--card);
-    border: 1px solid rgba(0,212,255,0.2);
-    border-radius: 24px;
-    padding: 40px 36px;
-    max-width: 440px;
-    width: 90%;
-    text-align: center;
-    animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.92) translateY(20px); }
-    to { opacity: 1; transform: scale(1) translateY(0); }
-  }
-  .modal-icon { font-size: 3rem; margin-bottom: 16px; }
-  .modal h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #fff;
-    margin-bottom: 10px;
-    letter-spacing: -0.5px;
-  }
-  .modal p { color: var(--muted); font-size: 0.9rem; line-height: 1.65; margin-bottom: 24px; }
-  .modal-btn {
-    display: block;
-    width: 100%;
-    padding: 15px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(135deg, var(--accent), #0099cc);
-    color: #000;
-    font-family: 'Syne', sans-serif;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    text-decoration: none;
-    transition: opacity 0.2s;
-    margin-bottom: 12px;
-  }
-  .modal-btn:hover { opacity: 0.85; }
-  .modal-close {
-    font-size: 0.8rem;
-    color: var(--muted);
-    cursor: pointer;
-    text-decoration: underline;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'DM Sans', sans-serif;
-  }
-  .modal-close:hover { color: var(--text); }
-
-  /* ── UTIL ── */
-  .divider {
-    border: none;
-    border-top: 1px solid var(--border);
-    margin: 0;
-  }
-
-  @media (max-width: 640px) {
-    .hero { padding: 60px 5vw 40px; }
-    .hero-stats { gap: 24px; }
-    nav { padding: 14px 4vw; }
-  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
 </style>
 </head>
 <body>
@@ -592,118 +465,127 @@
 <div class="glow-1"></div>
 <div class="glow-2"></div>
 
-<!-- NAV -->
 <nav>
   <a class="logo" href="#">Frame<span>Forge</span> AI</a>
   <a class="nav-cta" href="#tools">Try Free →</a>
 </nav>
 
-<!-- TICKER -->
 <div class="ticker-wrap">
   <div class="ticker">
-    &nbsp;&nbsp;⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;·&nbsp; 🎵 500K+ royalty-free tracks &nbsp;·&nbsp; 🎙️ 120+ AI voices &nbsp;·&nbsp; 🌍 Works in 40 languages &nbsp;·&nbsp; ✅ No watermark on export &nbsp;·&nbsp; 📱 All formats: 16:9 · 9:16 · 1:1 &nbsp;·&nbsp; ⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;·&nbsp; 🎵 500K+ royalty-free tracks &nbsp;·&nbsp; 🎙️ 120+ AI voices &nbsp;·&nbsp; 🌍 Works in 40 languages &nbsp;·&nbsp; ✅ No watermark on export &nbsp;·&nbsp; 📱 All formats: 16:9 · 9:16 · 1:1 &nbsp;&nbsp;
+    &nbsp;&nbsp;⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;·&nbsp; 🎵 500K+ royalty-free tracks &nbsp;·&nbsp; 🎙️ 120+ AI voices &nbsp;·&nbsp; 🌍 Works in 40 languages &nbsp;·&nbsp; ✅ No watermark on export &nbsp;·&nbsp; ⚡ 60-second generation &nbsp;·&nbsp; 🎬 4K video output &nbsp;&nbsp;
   </div>
 </div>
 
-<!-- HERO -->
 <section class="hero">
   <div class="hero-badge">✦ Free to use — No credit card required</div>
   <h1>Turn Any Idea Into<br>a <em>Stunning AI Video</em></h1>
-  <p class="hero-sub">Write a prompt. FrameForge AI scripts, animates, voices, and exports your video in under 60 seconds. No editing skills needed.</p>
+  <p class="hero-sub">Write a prompt. FrameForge AI scripts, animates, voices, and exports your video in under 60 seconds.</p>
 
   <div class="hero-stats">
     <div class="stat"><span class="stat-num">4K</span><span class="stat-label">Max Output</span></div>
     <div class="stat"><span class="stat-num">&lt;60s</span><span class="stat-label">Generation Time</span></div>
     <div class="stat"><span class="stat-num">120+</span><span class="stat-label">AI Voices</span></div>
-    <div class="stat"><span class="stat-num">Free</span><span class="stat-label">No Card Needed</span></div>
   </div>
 </section>
 
-<hr class="divider" />
-
-<!-- URGENCY BAR -->
 <div class="urgency-bar">
-  <div class="urgency-item">
-    <span class="urgency-label">🔥 Free access resets in</span>
-    <span id="countdown-display">--:--:--</span>
-  </div>
-  <div class="urgency-item">
-    <span class="urgency-label">Daily free generations left:</span>
-    <span class="urgency-val" id="spots-left">24</span>
-  </div>
+  <div class="urgency-item"><span class="urgency-label">🔥 Free access resets in</span><span id="countdown-display">00:45:12</span></div>
+  <div class="urgency-item"><span class="urgency-label">Generations left:</span><span class="urgency-val">24</span></div>
 </div>
 
-<hr class="divider" />
-
-<!-- TOOLS SECTION -->
 <section class="section" id="tools">
   <div class="section-label">⚡ Free AI Tools</div>
   <h2 class="section-title">Pick Your Tool. Generate Instantly.</h2>
-  <p class="section-sub">Three free AI tools — video, music, voice. All generated in under a minute. Just describe what you want.</p>
 
   <div class="tools-grid">
-
-    <!-- VIDEO CARD -->
-    <div class="tool-card" id="card-video">
+    <div class="tool-card">
       <div class="tool-icon blue">🎬</div>
       <h3>AI Video Generator</h3>
-      <p>Describe your scene and get a full cinematic video with auto-scripting, color grading, and 4K export.</p>
-      <div class="tool-input-area">
-        <textarea rows="3" placeholder="e.g. A neon-lit city at night, drone shot, cinematic mood…" id="video-prompt"></textarea>
-      </div>
-      <div class="tool-options">
-        <button class="tool-opt active" onclick="selectOpt(this)">Cinematic</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Vlog</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Product</button>
-        <button class="tool-opt" onclick="selectOpt(this)">4K · 16:9</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Shorts · 9:16</button>
-      </div>
+      <div class="tool-input-area"><textarea rows="3" placeholder="Describe your scene..."></textarea></div>
       <button class="btn-generate" onclick="triggerLocker('video')">⚡ Generate Video Free</button>
-      <p class="tool-tag">No sign-up · 1080p watermarked on free tier</p>
     </div>
 
-    <!-- MUSIC CARD -->
-    <div class="tool-card" id="card-music">
+    <div class="tool-card">
       <div class="tool-icon purple">🎵</div>
       <h3>AI Music Generator</h3>
-      <p>Describe the mood and get a royalty-free original track in seconds. Perfect for Reels, YouTube, and ads.</p>
-      <div class="tool-input-area">
-        <textarea rows="3" placeholder="e.g. Upbeat lo-fi hip hop, warm and cozy, 90 BPM…" id="music-prompt"></textarea>
-      </div>
-      <div class="tool-options">
-        <button class="tool-opt active" onclick="selectOpt(this)">Lo-fi</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Epic</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Chill</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Hip-hop</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Ambient</button>
-      </div>
+      <div class="tool-input-area"><textarea rows="3" placeholder="Describe the mood..."></textarea></div>
       <button class="btn-generate purple-btn" onclick="triggerLocker('music')">🎵 Generate Music Free</button>
-      <p class="tool-tag">Royalty-free · 60s preview on free tier</p>
     </div>
 
-    <!-- VOICE CARD -->
-    <div class="tool-card" id="card-voice">
+    <div class="tool-card">
       <div class="tool-icon pink">🎙️</div>
       <h3>AI Voice Changer</h3>
-      <p>Clone any voice or transform your recording into 120+ natural AI voices across 40 languages instantly.</p>
-      <div class="tool-input-area">
-        <input type="text" placeholder="e.g. Deep male narrator, British accent, calm tone…" id="voice-prompt" />
-      </div>
-      <div class="tool-options">
-        <button class="tool-opt active" onclick="selectOpt(this)">Male Deep</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Female Soft</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Narrator</button>
-        <button class="tool-opt" onclick="selectOpt(this)">Clone Voice</button>
-      </div>
+      <div class="tool-input-area"><input type="text" placeholder="Describe the voice..." /></div>
       <button class="btn-generate pink-btn" onclick="triggerLocker('voice')">🎙️ Change Voice Free</button>
-      <p class="tool-tag">30s sample on free tier · No account needed</p>
     </div>
-
   </div>
 </section>
 
-<hr class="divider" />
+<div class="modal-overlay" id="decision-modal">
+  <div class="modal">
+    <div class="modal-icon">🚀</div>
+    <h2>Complete Your Request</h2>
+    <p>Choose how you want to proceed with your <span id="tool-name" style="color:var(--accent);">AI Generator</span>.</p>
 
-<!-- BEFORE / AFTER -->
-<section class="section" style="text-align:center;">
-  <div class="section-l
+    <div class="modal-btn-group">
+      <a href="رابط_الافيلييت_ديالك_هنا" target="_blank" class="modal-btn btn-engine">
+        1. Access Free AI Engine
+        <span>Get your free daily credits now</span>
+      </a>
+
+      <button onclick="call_locker();" class="modal-btn btn-prompts">
+        2. Get VIP Prompt Pack
+        <span>Unlock exact viral settings (PDF)</span>
+      </button>
+    </div>
+
+    <button class="modal-close" onclick="closeModal()">Maybe later</button>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">Frame<span>Forge</span> AI</div>
+  <p>© 2026 FrameForge AI. All rights reserved.</p>
+</footer>
+
+<script>
+  function triggerLocker(type) {
+    const modal = document.getElementById('decision-modal');
+    const toolName = document.getElementById('tool-name');
+    
+    if(type === 'video') toolName.innerText = 'Video Generator';
+    if(type === 'music') toolName.innerText = 'Music Engine';
+    if(type === 'voice') toolName.innerText = 'Voice Clone';
+    
+    modal.classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('decision-modal').classList.remove('open');
+  }
+
+  function call_locker() {
+    // هنا حط كود الـ Locker ديال OGAds
+    // مثال: call_og_locker();
+    console.log("CPA Locker Triggered");
+    alert("CPA Offer Loading..."); 
+  }
+
+  // Timer Simple
+  function startTimer(duration, display) {
+    var timer = duration, hours, minutes, seconds;
+    setInterval(function () {
+      hours = parseInt(timer / 3600, 10);
+      minutes = parseInt((timer % 3600) / 60, 10);
+      seconds = parseInt(timer % 60, 10);
+      display.textContent = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+      if (--timer < 0) timer = duration;
+    }, 1000);
+  }
+  window.onload = function () {
+    startTimer(3600 * 2, document.querySelector('#countdown-display'));
+  };
+</script>
+
+</body>
+</html>
